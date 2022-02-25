@@ -168,7 +168,7 @@ apiScan() {
   for i in "${!tokens[@]}"
   do
     #trim whitespace
-    DEFINITION_FILE=$(echo "${tokens[i]}" | xargs echo -n)
+    DEFINITION_FILE=$(echo "${WORKSPACE}/${tokens[i]}" | xargs echo -n)
     cp "${DEFINITION_FILE}" "${API_DATA_FILE}"
     prepareData
     if [ "${PIPELINE_DEBUG}" = "1" ]; then
