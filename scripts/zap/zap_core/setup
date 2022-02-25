@@ -86,7 +86,7 @@ ZAP_EVIDENCE_TYPE="$(get_env zap_evidence_type "com.ibm.dynamic_scan")"
 SHOW_CONTAINER_LOGS="$(get_env show-container-log "false")"
 SHOW_ZAP_LOGS="$(get_env show-zap-log "false")"
 
-# Images and params for setting up pull secrets. 
+# Images and params for setting up pull secrets.
 # Looking to get these pushed to ICR to remove the self hosting dependency and need for pull secrets
 ZAP_UI_IMAGE="$(get_env zap-ui-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-ui-scanner@sha256:2ea4636025ffd068495f3f9e41240a7c1720647c00c19396197edbf8f6c935ed")"
 ZAP_PROXY_IMAGE="$(get_env zap-proxy-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-ui-proxy@sha256:c66dcebdf2bba59a9b3e8506710fba41c7edb9105f23caa673343fbdb1278e44")"

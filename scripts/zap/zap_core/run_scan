@@ -30,7 +30,7 @@ report() {
   done
 
   echo "SCAN COMPLETE. STATUS MESSAGE: ${MESSAGE}"
-  
+
   if [[ "${MESSAGE}" == "COMPLETED" ]]; then
       FILTER='{"alertsSeverityFilter" : "'$FILTER_OPTIONS'"}'
       echo "filtor options $FILTER"
@@ -77,7 +77,7 @@ prepareUIData() {
   #extract file name
   CUSTOM_SCRIPT_NAME=$(basename -- "$CUSTOM_UI_SCRIPT_PATH")
   STARTING_DIR=$(pwd)
-  
+
   cd "${UI_SCRIPTS_DIR}" || exit
   #copy customisation script into ui scripts directory
   if [[ "${CUSTOM_UI_SCRIPT_PATH}" ]]; then
@@ -86,10 +86,10 @@ prepareUIData() {
     cp "${CUSTOM_UI_SCRIPT_PATH}" ./
     . "${CUSTOM_SCRIPT_NAME}"
     rm "${CUSTOM_SCRIPT_NAME}"
-  else 
+  else
     echo "No UI custom scripts found"
   fi
-  
+
   #prepare directory structure for scan => uiscripts.zip/uiscripts/files
   mkdir /tmp/uiscripts
   cp -r ./* /tmp/uiscripts
@@ -117,7 +117,7 @@ showContainerLogs() {
     local container
     if [ "${RUN_UI_SCAN}" = "true" ]; then
       container="${ZAP_UI_DEPLOYMENT}"
-    else 
+    else
       container="${ZAP_API_DEPLOYMENT}"
     fi
     local containerId="$(docker inspect --format="{{.Id}}" "${container}")"
@@ -161,7 +161,7 @@ uiScan() {
 
 apiScan() {
   echo "Initiating API scan"
-    #expecting comma separated definitions
+  #expecting comma separated definitions
   #DEFINITION_PATHS is path within the repository containing the json definitions
   showContainerLogs
   IFS=',' read -ra tokens <<< "${DEFINITION_PATHS}"
