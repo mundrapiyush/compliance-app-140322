@@ -175,7 +175,7 @@ spec:
         ports:
         - containerPort: 9080
 EOF
-  DEPLOYMENT_FILE=zap-scan/deployment.yaml  
+  DEPLOYMENT_FILE=zap-scan/deployment.yaml
 }
 
 getUIDeploymentFile() {

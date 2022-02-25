@@ -61,6 +61,7 @@ if [ "${CLUSTER_TYPE}" == "OPENSHIFT" ]; then
   APPURL=$(kubectl get route --namespace "$IBMCLOUD_IKS_CLUSTER_NAMESPACE" "${service_name}" -o json | jq -r '.status.ingress[0].host')
   echo "Application URL: http://${APPURL}"
   echo -n http://${APPURL} >../app-url
+  set_env "app-url" "http://${APPURL}"
 else
   CLUSTER_INGRESS_SUBDOMAIN=$(ibmcloud ks cluster get --cluster ${IBMCLOUD_IKS_CLUSTER_NAME} --json | jq -r '.ingressHostname // .ingress.hostname' | cut -d, -f1)
   sleep 10
@@ -82,7 +83,7 @@ else
       done
       echo "Application URL: http://${APPURL}"
       echo -n http://${APPURL} >../app-url
-      
+      set_env "app-url" "http://${APPURL}"
     fi
 
   else
@@ -91,7 +92,7 @@ else
     PORT=$(kubectl get service -n "$IBMCLOUD_IKS_CLUSTER_NAMESPACE" "$service_name" -o json | jq -r '.spec.ports[0].nodePort')
     echo "Application URL: http://${IP_ADDRESS}:${PORT}"
     echo -n "http://${IP_ADDRESS}:${PORT}" >../app-url
-
+    set_env "app-url" "http://${IP_ADDRESS}:${PORT}"
   fi
 
 fi

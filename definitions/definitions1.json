@@ -31,6 +31,27 @@
 				}
 			}
 		},
+		"/auth/health": {
+			"get": {
+				"summary": "Get application health as an authenticated route",
+				"parameters": [
+					{
+						"name": "Authorization",
+					  	"in": "header",
+					  	"description": "Bearer token or basic auth",
+					  	"required": true,
+					  	"schema": {
+							"type": "string"
+					  	}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
 		"/airports": {
 			"get": {
 				"summary": "Get list of airports with search facility",

@@ -88,7 +88,7 @@ acceptance-test:
     #!/usr/bin/env bash
     npm install
     npm ci
-    export APP_URL=$(cat ../app-url)    
+    export APP_URL=$(get_env app-url)    
     # save exit code for old evidence collection
     exit_code=0
     npm run acceptance-test || exit_code=$?
@@ -121,7 +121,7 @@ dynamic-scan:
   image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi@sha256:d59863621d3ba1b9bd47f76950c751e842405f9c303d0d4d4298d964b664ee85
   script: |
     #!/usr/bin/env bash
-    export APP_URL=$(cat ../app-url)
+    export APP_URL=$(get_env app-url)
     echo "APP_URL is ${APP_URL}"
 
     set_env "app-url" "$APP_URL"    
