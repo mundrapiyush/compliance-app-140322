@@ -55,7 +55,7 @@ CUSTOM_UI_SCRIPT_PATH="${WORKSPACE}/$(get_env zap-ui-custom-script "")"
 UI_SCRIPTS_DIR="${WORKSPACE}/$(get_env zap-ui-script-directory "")"
 
 # The path to the files containing the Swagger definitions. Can be comma separated list
-DEFINITION_PATHS="${WORKSPACE}/$(get_env swagger-definition-files "")"
+DEFINITION_PATHS="$(get_env swagger-definition-files "")"
 
 # Path to a context file for UI scans
 CONTEXT_FILE="${WORKSPACE}/$(get_env context-file "")"
