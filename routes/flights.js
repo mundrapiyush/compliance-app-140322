@@ -35,68 +35,8 @@ function logincheck(req, res, next) {
 
 /* flight search */
 /* GET flights between two airports */
-router.post('/search', (req, res, next) => {
-    let { to, from, trip_class, trip_type, pax, date } = req.body;
-    // validation for payload
-    if(!to || !from) {
-        return res.status(400).send({
-            status: false,
-            message: "Source and Destination required"
-        });
-    }
-    if(!trip_class) {
-        trip_class = enumMap.trip_class_map.ECONOMY;
-    } 
-    if(!utils.validateEnumMap(enumMap.trip_class_map, trip_class)) {
-        return res.status(400).send({
-            status: false,
-            message: "Invalid trip class"
-        });
-    }
-
-    if(!trip_type) {
-        trip_type = enumMap.trip_type_map.ONE_WAY;
-    } 
-    if(!utils.validateEnumMap(enumMap.trip_type_map, trip_type)) {
-        return res.status(400).send({
-            status: false,
-            message: "Invalid trip type"
-        });
-    }
-
-    if(!pax || (!pax.adult && !pax.children) ) {
-        return res.status(400).send({
-            status: false,
-            message: "Passengers can not be zero"
-        });
-    }
-
-    if(!date || !date.departing) {
-        return res.status(400).send({
-            status: false,
-            message: "Departing date must be set!"
-        });
-    } else if(date && !date.returning && trip_type === enumMap.trip_type_map.ROUND_TRIP) {
-        return res.status(400).send({
-            status: false,
-            message: "Returning date must be set for round-trip flight!"
-        });
-    }
-
-    if(date && !Date.parse(new Date(date.departing))) {
-        return res.status(400).send({
-            status: false,
-            message: "Invalid departing date"
-        });
-    }
-
-    if(date && date.returning && !Date.parse(new Date(date.returning))) {
-        return res.status(400).send({
-            status: false,
-            message: "Invalid return date"
-        });
-    }
-
+router.post('/search', validateSearchData, validateDateForTrip, (req, res, next) => {
+    let { to, from, trip_type, pax, date } = req.body;
     /* find flights between from and two
     ignore rest of the params */
 
@@ -199,6 +139,75 @@ function computeFlightSearch(source, dest, pax, date) {
         results.push(payload);
     }
     return results;
+}
+
+function validateSearchData(req, res, next) {
+    let { to, from, trip_class, trip_type, pax } = req.body;
+    // validation for payload
+    if(!to || !from) {
+        return res.status(400).send({
+            status: false,
+            message: "Source and Destination required"
+        });
+    }
+    if(!trip_class) {
+        req.body.trip_class = enumMap.trip_class_map.ECONOMY;
+    } 
+    if(!utils.validateEnumMap(enumMap.trip_class_map, req.body.trip_class)) {
+        return res.status(400).send({
+            status: false,
+            message: "Invalid trip class"
+        });
+    }
+
+    if(!trip_type) {
+        req.body.trip_type = enumMap.trip_type_map.ONE_WAY;
+    } 
+    if(!utils.validateEnumMap(enumMap.trip_type_map, req.body.trip_type)) {
+        return res.status(400).send({
+            status: false,
+            message: "Invalid trip type"
+        });
+    }
+
+    if(!pax || (!pax.adult && !pax.children) ) {
+        return res.status(400).send({
+            status: false,
+            message: "Passengers can not be zero"
+        });
+    }
+
+    return next();
+}
+
+function validateDateForTrip(req, res, next) {
+    let { date, trip_type } = req.body;
+    if(!date || !date.departing) {
+        return res.status(400).send({
+            status: false,
+            message: "Departing date must be set!"
+        });
+    } else if(date && !date.returning && trip_type === enumMap.trip_type_map.ROUND_TRIP) {
+        return res.status(400).send({
+            status: false,
+            message: "Returning date must be set for round-trip flight!"
+        });
+    }
+
+    if(date && !Date.parse(new Date(date.departing))) {
+        return res.status(400).send({
+            status: false,
+            message: "Invalid departing date"
+        });
+    }
+
+    if(date && date.returning && !Date.parse(new Date(date.returning))) {
+        return res.status(400).send({
+            status: false,
+            message: "Invalid return date"
+        });
+    }
+    return next();
 }
 
 /* GET flightbooking page. */
