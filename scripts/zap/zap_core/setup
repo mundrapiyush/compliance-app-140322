@@ -45,11 +45,15 @@ TARGET_APPLICATION_SERVER_URL="$(get_env target-application-server-url "")"
 
 # Path to a script that can be run to modify the swagger json before the scan request
 # e.g convert from yaml to json or modify entries
-CUSTOM_API_SCRIPT_PATH="${WORKSPACE}/$(get_env zap-api-custom-script "")"
+if [ ! "$(get_env zap-api-custom-script "")" = "" ]; then
+    CUSTOM_API_SCRIPT_PATH="${WORKSPACE}/$(get_env zap-api-custom-script "")"
+fi    
 
 # Path to script that can be used to modify the uiscripts.zip payload for the UI scan
 # e.g It is likely that it will be required to generate a bash script containing secrets for the UI tests
-CUSTOM_UI_SCRIPT_PATH="${WORKSPACE}/$(get_env zap-ui-custom-script "")"
+if [ ! "$(get_env zap-ui-custom-script "")" = "" ]; then
+    CUSTOM_UI_SCRIPT_PATH="${WORKSPACE}/$(get_env zap-ui-custom-script "")"
+fi
 
 # Path to the directory containing the UI tests and required files to run the UI scan
 UI_SCRIPTS_DIR="${WORKSPACE}/$(get_env zap-ui-script-directory "")"

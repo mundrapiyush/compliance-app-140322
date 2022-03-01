@@ -48,6 +48,8 @@ tearDown() {
 }
 
 clusterLogin() {
+  ibmcloud config --check-version false
+
   retry 5 2 \
   ibmcloud login -a "${IBMCLOUD_API}" --apikey "${IBMCLOUD_API_KEY}" --no-region
 
