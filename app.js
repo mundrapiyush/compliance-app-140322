@@ -65,6 +65,7 @@ const authRouter = require('./routes/auth');
 
 const defaultDirectives = helmet.contentSecurityPolicy.getDefaultDirectives();
 delete defaultDirectives['upgrade-insecure-requests'];
+delete defaultDirectives['block-all-mixed-content'];
 
 const app = express();
 app.use(helmet.hidePoweredBy());
@@ -75,8 +76,8 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       ...defaultDirectives,
-      "script-src": ["'self'", "unpkg.com"],
-      "style-src": ["'self'", "unpkg.com"],
+      "script-src": ["'self'"],
+      "style-src": ["'self'"],
       "font-src": ["'self'", "fonts.gstatic.com"],
       "form-action": ["'self'"]
     },

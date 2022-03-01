@@ -13,6 +13,8 @@
 
 const express = require('express');
 
+const csrfProtection = require('../utils/csrf-middleware');
+
 const router = express.Router();
 
 function logincheck(req, res, next) {
@@ -29,8 +31,8 @@ router.get('/health', (req, res, next) => {
 })
 
 /* GET home page. */
-router.get('/', logincheck, (req, res, next) => {
-  res.render('index', { isLoggedInUser: req.isLoggedInUser, userEmail: req.session.userEmail });
+router.get('/', logincheck, csrfProtection, (req, res, next) => {
+  res.render('index', { isLoggedInUser: req.isLoggedInUser, userEmail: req.session.userEmail, _csrf: req.csrfToken() });
 });
 
 /* Login code */

@@ -22,6 +22,8 @@ const utils = require('../utils');
 
 const airportsList = require('../data/airports_list.json');
 
+const csrfProtection = require('../utils/csrf-middleware');
+
 function logincheck(req, res, next) {
     if (req.session && req.session.userEmail) {
         req.isLoggedInUser = true
@@ -198,8 +200,8 @@ function computeFlightSearch(from, to, pax, date) {
 }
 
 /* GET flightbooking page. */
-router.get('/', logincheck, (req, res, next) => {
-    res.render('flights', { isLoggedInUser: req.isLoggedInUser, userEmail: req.session.userEmail });
+router.get('/', logincheck, csrfProtection, (req, res, next) => {
+    res.render('flights', { isLoggedInUser: req.isLoggedInUser, userEmail: req.session.userEmail, _csrf: req.csrfToken() });
 });
 
 
