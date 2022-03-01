@@ -7,6 +7,7 @@ This sample contains an simple Node.js microservice that can be deployed with [C
 - [Node.js Sample Application](#nodejs-sample-application)
   - [Contents](#contents)
   - [Run the sample](#run-the-sample)
+  - [Documentation and troubleshooting guideline:](#documentation-and-troubleshooting-guideline)
 
 ## Run the sample
 - Prerequisites
