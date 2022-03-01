@@ -34,14 +34,10 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use(new LocalStrategy((username, password, done) => {
-  if (username && password) {
-    return done(null, { id: 1, name: "User1" });
-  }
-  return done({ message: "Username / password mismatch" });
+  return handleLocalandBasicStrategy(username, password, "Username / password mismatch", done );
 }));
 
-passport.use(new BearerStrategy(
-  function(token, done) {
+passport.use(new BearerStrategy((token, done) => {
     if(token) {
       return done(null, { id: 1, name: "User1" });
     }
@@ -49,14 +45,17 @@ passport.use(new BearerStrategy(
   }
 ));
 
-passport.use(new BasicStrategy(
-  function(username, password, done) {
-    if (username && password) {
-      return done(null, { id: 1, name: "User1" });
-    }
-    return done({ message: "Username / password mismatch" });
+passport.use(new BasicStrategy((username, password, done) => {
+    return handleLocalandBasicStrategy(username, password, "Username / password mismatch", done );
   }
 ));
+
+function handleLocalandBasicStrategy(username, password, message, done) {
+  if (username && password) {
+    return done(null, { id: 1, name: "User1" });
+  }
+  return done({ message });
+}
 
 const indexRouter = require('./routes/index');
 const flightBookingRouter = require('./routes/flights');

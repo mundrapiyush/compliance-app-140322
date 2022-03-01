@@ -46,7 +46,8 @@ router.post('/search', (req, res, next) => {
     }
     if(!trip_class) {
         trip_class = enumMap.trip_class_map.ECONOMY;
-    } else if(!utils.validateEnumMap(enumMap.trip_class_map, trip_class)) {
+    } 
+    if(!utils.validateEnumMap(enumMap.trip_class_map, trip_class)) {
         return res.status(400).send({
             status: false,
             message: "Invalid trip class"
@@ -55,7 +56,8 @@ router.post('/search', (req, res, next) => {
 
     if(!trip_type) {
         trip_type = enumMap.trip_type_map.ONE_WAY;
-    } else if(!utils.validateEnumMap(enumMap.trip_type_map, trip_type)) {
+    } 
+    if(!utils.validateEnumMap(enumMap.trip_type_map, trip_type)) {
         return res.status(400).send({
             status: false,
             message: "Invalid trip type"
@@ -124,23 +126,23 @@ router.post('/search', (req, res, next) => {
     });
 });
 
-function computeFlightSearch(from, to, pax, date) {
+function computeFlightSearch(source, dest, pax, date) {
     const filtered_airports = airportsList.filter(elem => elem.icao);
-    let from_airport = filtered_airports.find(elem => elem.code === from);
+    let from_airport = filtered_airports.find(elem => elem.code === source);
     if(!from_airport) {
-        throw {
+        throw new Object({
             status: false,
             message: "Departing airport not found in the list",
             statusCode: 404
-        };
+        });
     }
-    let to_airport = filtered_airports.find(elem => elem.code === to);
+    let to_airport = filtered_airports.find(elem => elem.code === dest);
     if(!to_airport) {
-        throw {
+        throw new Object({
             status: false,
             message: "Destination airport not found in the list",
             statusCode: 404
-        };
+        });
     }
     from_airport = utils.addMetaToAirportInfo(from_airport);
     to_airport = utils.addMetaToAirportInfo(to_airport);
@@ -150,32 +152,32 @@ function computeFlightSearch(from, to, pax, date) {
     // airlines operating from "from airport"
     const airlines_operating_from = from_airport['nick'] ? airport_airlines[from_airport['nick']] : [];
     if(!airlines_operating_from || !airlines_operating_from.length) {
-        throw {
+        throw new Object({
             status: false,
             message: "No airlines found to be operating from departure airport",
             statusCode: 404
-        };
+        });
     }
 
     // airlines operating from "from airport"
     const airlines_operating_to = to_airport['nick'] ? airport_airlines[to_airport['nick']] : [];
     if(!airlines_operating_to || !airlines_operating_to.length) {
-        throw {
+        throw new Object({
             status: false,
             message: "No airlines found to be operating to destination airport",
             statusCode: 404
-        };
+        });
     }
 
     // find intersecting airlines
     const intersecting_airlines = airlines_operating_from.filter(value => airlines_operating_to.includes(value));
 
     if(!intersecting_airlines.length) {
-        throw {
+        throw new Object({
             status: false,
             message: "No flights connecting the cities",
             statusCode: 404
-        };
+        });
     }
 
     //put some dummy price info, flight numbers, and time
