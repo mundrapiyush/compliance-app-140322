@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 source "${ONE_PIPELINE_PATH}"/tools/retry
-
 export IBMCLOUD_API_KEY
 export IBMCLOUD_TOOLCHAIN_ID
 export IBMCLOUD_IKS_REGION
@@ -44,27 +43,30 @@ if [[ -f "/config/break_glass" ]]; then
   KUBECONFIG=/config/cluster-cert
 else
   IBMCLOUD_IKS_REGION=$(echo "${IBMCLOUD_IKS_REGION}" | awk -F ":" '{print $NF}')
+  ibmcloud config --check-version false
   retry 5 2 \
     ibmcloud login -r "${IBMCLOUD_IKS_REGION}"
-  
+
   retry 5 2 \
     ibmcloud ks cluster config --cluster "${IBMCLOUD_IKS_CLUSTER_NAME}"
 
+
   ibmcloud ks cluster get --cluster "${IBMCLOUD_IKS_CLUSTER_NAME}" --json > "${IBMCLOUD_IKS_CLUSTER_NAME}.json"
   IBMCLOUD_IKS_CLUSTER_ID=$(jq -r '.id' "${IBMCLOUD_IKS_CLUSTER_NAME}.json")
-  
+
   if [ "$(kubectl config current-context)" != "${IBMCLOUD_IKS_CLUSTER_NAME}"/"${IBMCLOUD_IKS_CLUSTER_ID}" ]; then
     echo "ERROR: Unable to connect to the Kubernetes cluster."
     echo "Consider checking that the cluster is available with the following command: \"ibmcloud ks cluster get --cluster ${IBMCLOUD_IKS_CLUSTER_NAME}\""
     echo "If the cluster is available check that that kubectl is properly configured by getting the cluster state with this command: \"kubectl cluster-info\""
     exit 1
   fi
-  
+
+
   # If the target cluster is openshift then make the appropriate additional login with oc tool
   if which oc > /dev/null && jq -e '.type=="openshift"' "${IBMCLOUD_IKS_CLUSTER_NAME}.json" > /dev/null; then
     echo "${IBMCLOUD_IKS_CLUSTER_NAME} is an openshift cluster. Doing the appropriate oc login to target it"
     oc login -u apikey -p "${IBMCLOUD_API_KEY}"
-    CLUSTER_TYPE="OPENSHIFT"
+     CLUSTER_TYPE="OPENSHIFT"
   fi
 fi
 
@@ -75,5 +77,8 @@ if [ -z "${DEPLOYMENT_FILE}" ]; then
   else
     DEPLOYMENT_FILE="deployment_iks.yml"
   fi
+   
+  set_env "deployment-file" "$DEPLOYMENT_FILE"    
+  set_env "cluster-type" "$CLUSTER_TYPE"
   echo "deployment-file is ${DEPLOYMENT_FILE}"
 fi
