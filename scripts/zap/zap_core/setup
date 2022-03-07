@@ -35,7 +35,7 @@ IBMCLOUD_API_KEY="$(get_env ibmcloud-api-key "")"
 IBMCLOUD_IKS_CLUSTER_NAME="$(get_env cluster-name "")"
 
 # IAM endpoint - default: https://iam.cloud.ibm.com/identity/token
-IAM_ENDPOINT="$(get_env iam-token-endpoint "")"
+IAM_ENDPOINT="$(get_env iam-token-endpoint "https://iam.cloud.ibm.com/identity/token")"
 # Api-key for IAM authentcation
 TARGET_API_KEY="$(get_env target-api-key "")"
 # Note: Both need to be set to add IAM authentication to api scan request
@@ -94,5 +94,5 @@ SHOW_ZAP_LOGS="$(get_env show-zap-log "false")"
 # Looking to get these pushed to ICR to remove the self hosting dependency and need for pull secrets
 ZAP_UI_IMAGE="$(get_env zap-ui-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-ui-scanner@sha256:2ea4636025ffd068495f3f9e41240a7c1720647c00c19396197edbf8f6c935ed")"
 ZAP_PROXY_IMAGE="$(get_env zap-proxy-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-ui-proxy@sha256:c66dcebdf2bba59a9b3e8506710fba41c7edb9105f23caa673343fbdb1278e44")"
-ZAP_API_IMAGE="$(get_env zap-api-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-api-scanner@sha256:7030bfe59317dd4e1341a33bb4b81d97e25a8b80078278b9d5ce59a898ae17f2")"
+ZAP_API_IMAGE="$(get_env zap-api-image "icr.io/continuous-delivery/toolchains/devsecops/owasp-zap-api-scanner:04-03-2022-14-07@sha256:31d1fe75397f75e5883a838d4cefcfe23c37c11c13692dfb6901f105ffd53585")"
 
