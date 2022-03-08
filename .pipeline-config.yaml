@@ -40,18 +40,6 @@ test:
       --asset-key "app-repo"
     exit $exit_code
 
-static-scan:
-  dind: true
-  image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi@sha256:d59863621d3ba1b9bd47f76950c751e842405f9c303d0d4d4298d964b664ee85
-  script: |
-    #!/usr/bin/env bash
-    if [ -z "$(get_env opt-in-sonar "")" ]; then
-      echo "If you want to enable this stage, add 'opt-in-sonar' parameter to your pipeline with any value." >&2
-    else
-      chmod 777 scripts/sonarqube/sonarqube_run
-      scripts/sonarqube/sonarqube_run
-    fi
-
 containerize:
   dind: true
   image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi@sha256:d59863621d3ba1b9bd47f76950c751e842405f9c303d0d4d4298d964b664ee85
