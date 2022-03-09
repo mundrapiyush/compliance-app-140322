@@ -9,7 +9,7 @@ setup:
       env
       set -x
     fi
-    if [[ "$pipeline_namespace" == *"pr"* ||  "$pipeline_namespace" == *"ci"* ]]; then
+    if [[ "$(get_env pipeline_namespace)" == *"pr"* ||  "$(get_env pipeline_namespace)" == *"ci"* ]]; then
       source scripts/code_setup.sh
     fi  
 
