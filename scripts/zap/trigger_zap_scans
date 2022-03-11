@@ -5,6 +5,18 @@
       set -x
     fi
     CURRENT_DIRECTORY=$(pwd)
+
+    if [[ "$(get_env pipeline_namespace)" == *"ci"* ]]; then
+      export APP_URL=$(get_env app-url)
+    elif [[ -z $(get_env app-url "") ]]; then
+      echo "Please provide app-url as environment property. You can provide it through the pipeline UI as a parameter or set it during the pipeline run by running 'set_env app-url \$URL'"
+      exit 1
+    else
+      export APP_URL=$(get_env app-url)
+    fi
+        
+    echo "APP_URL is ${APP_URL}"
+
     
     # GENERAL NOTE
     # The zap scan scripts assume it is working from ${WORKSPACE} (/workspace/app)
@@ -45,7 +57,7 @@
     # SEE zap-core/setup for other optional params
 
     # SET THE CORE ZAP FILES DIRECTORY
-    set_env "zap-core-scripts" "one-pipeline-config-repo/scripts/zap/zap_core"
+    # set_env "zap-core-scripts" "one-pipeline-config-repo/scripts/zap/zap_core"
 
     # SET UP A RESULTS FILTER High, Medium, Low, Informational (Optional). Reommended to filter out Informational
     set_env "filter-options" "Informational"
@@ -64,10 +76,10 @@
 
     if [ -z  "${URL}"  ] || [[  "${URL}" = "http://null"  ]]; then
       
-      ZAP_SCRIPTS_DIR="${WORKSPACE}/$(get_env zap-core-scripts "")"
+      # ZAP_SCRIPTS_DIR="${WORKSPACE}/$(get_env zap-core-scripts "")"
       ZAP_EVIDENCE_TYPE="$(get_env zap_evidence_type "com.ibm.dynamic_scan")"
       ZAP_STATUS_TYPE="failure"
-      source "${ZAP_SCRIPTS_DIR}"/report
+      source "${COMMONS_PATH}"/owasp-zap/report.sh
 
       echo "Unable to get Application URL....."
       exit 1
@@ -81,5 +93,25 @@
     # set an optional custom file to modify the swagger definition before it is sent to be scan
     set_env "zap-api-custom-script" "one-pipeline-config-repo/scripts/zap/zap-custom-scripts/custom-api-script"
 
-    # start the scan
-    source one-pipeline-config-repo/scripts/zap/zap_core/run_scan
+    # set zap-ui-scripts directory
+    set_env "zap-ui-script-directory" "one-pipeline-config-repo/scripts/zap/uiscripts"
+
+    if [ -n "$(get_env opt-in-dynamic-api-scan "")" ]; then
+      # start the api scan
+      source "${COMMONS_PATH}"/owasp-zap/run_scan.sh
+    fi
+
+    if [ -n "$(get_env opt-in-dynamic-ui-scan "")" ]; then
+      # set for zap-ui-scans and start zap-ui-scan
+      set_env "zap-ui-scan" "true"
+      source "${COMMONS_PATH}"/owasp-zap/run_scan.sh
+    fi
+
+    ZAP_API_RESULT=$(get_env api-scan-result "notRun")
+    ZAP_UI_RESULT=$(get_env ui-scan-result "notRun")
+
+    if [[ "${ZAP_API_RESULT}" =~ ^(success|notRun)$ && "${ZAP_UI_RESULT}" =~ ^(success|notRun)$ ]]; then
+      exit 0
+    else
+      exit 1
+    fi

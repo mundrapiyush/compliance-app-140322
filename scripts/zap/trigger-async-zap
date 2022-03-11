@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+if [[ "$PIPELINE_DEBUG" == 1 ]]; then
+    trap env EXIT
+    env
+    set -x
+fi
+
+source "${ONE_PIPELINE_PATH}"/tools/trigger-task
+
+set_env "app-url" "$APP_URL"
+export_env "app-url"
+#
+# save "target-application-server-url" using set_env
+# then mark it to export, so it will be synced 
+# to the "owasp-zap" task triggered async to a sub-pipeline
+#
+
+set_env "target-application-server-url" "$APP_URL"
+export_env "target-application-server-url"
+
+export_env "opt-in-dynamic-api-scan"
+export_env "opt-in-dynamic-ui-scan"
+
+trigger-task "owasp-zap"
